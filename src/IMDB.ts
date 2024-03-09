@@ -43,7 +43,9 @@ export class InMemoryDB {
   getAll(key: string) {
     const [storeKey, nestedKey] = key.split('.');
     if (this.store[storeKey]) {
-      return this.store[storeKey] || [];
+      const keys = Object.keys(this.store[storeKey]);
+      const dataArray = keys.map((key) => this.store[storeKey][key]);
+      return dataArray;
     }
     return [];
   }
@@ -70,6 +72,18 @@ export class InMemoryDB {
         const user = this.store['user'][key];
         if (user.login === username) {
           return user;
+        }
+      }
+      return null;
+    }
+  }
+
+  findByArtistName(artistname: string): any {
+    if (this.store['artist']) {
+      for (const key in this.store['artist']) {
+        const artist = this.store['artist'][key];
+        if (artist.name === artistname) {
+          return artist;
         }
       }
       return null;

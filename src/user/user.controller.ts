@@ -20,6 +20,11 @@ import { ApiTags } from '@nestjs/swagger';
 import { User } from './entities/user.entity';
 import { handleErrors } from 'src/utils/handleErrors';
 
+// TODO:
+// 1) if update => add updatedAt value
+// 2) if update => add +1 to version count
+// 3) if GET => do not show password (dont return password)
+
 @ApiTags('User')
 @Controller('user')
 export class UserController {
@@ -27,7 +32,9 @@ export class UserController {
 
   @Post()
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
-    const user = await this.userService.findByName(createUserDto.login);
+    const user = await handleErrors(
+      this.userService.findByName(createUserDto.login),
+    );
     if (user) throw new BadRequestException('User already exists');
     return await handleErrors(this.userService.create(createUserDto));
   }
