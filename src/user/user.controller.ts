@@ -9,9 +9,10 @@ import {
   NotFoundException,
   Put,
   ParseUUIDPipe,
-  ForbiddenException,
   HttpCode,
   HttpStatus,
+  ClassSerializerInterceptor,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -20,22 +21,19 @@ import { ApiTags } from '@nestjs/swagger';
 import { User } from './entities/user.entity';
 import { handleErrors } from 'src/utils/handleErrors';
 
-// TODO:
-// 1) if update => add updatedAt value
-// 2) if update => add +1 to version count
-// 3) if GET => do not show password (dont return password)
-
 @ApiTags('User')
 @Controller('user')
+@UseInterceptors(ClassSerializerInterceptor)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  async create(@Body() createUserDto: CreateUserDto): Promise<User> {
+  async create(@Body() createUserDto: CreateUserDto) {
     const user = await handleErrors(
       this.userService.findByName(createUserDto.login),
     );
     if (user) throw new BadRequestException('User already exists');
+
     return await handleErrors(this.userService.create(createUserDto));
   }
 
@@ -63,18 +61,7 @@ export class UserController {
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
   ): Promise<User> {
-    const { oldPassword, newPassword } = updatePasswordDto;
-    const user = await this.findById(id);
-    if (user.password === oldPassword) {
-      return await handleErrors(
-        this.userService.update(id, {
-          ...user,
-          password: newPassword,
-        }),
-      );
-    } else {
-      throw new ForbiddenException('Old password is incorrect');
-    }
+    return await handleErrors(this.userService.update(id, updatePasswordDto));
   }
 
   @Delete(':id')
