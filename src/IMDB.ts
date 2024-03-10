@@ -89,4 +89,16 @@ export class InMemoryDB {
       return null;
     }
   }
+
+  findByAlbumName(albumname: string): any {
+    if (this.store['album']) {
+      for (const key in this.store['album']) {
+        const album = this.store['album'][key];
+        if (album.name === albumname) {
+          return album;
+        }
+      }
+      return null;
+    }
+  }
 }

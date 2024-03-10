@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InMemoryDB } from 'src/IMDB';
 import { User } from './entities/user.entity';
 import { plainToInstance } from 'class-transformer';
@@ -41,6 +45,7 @@ export class UserService {
   ): Promise<User> {
     const { oldPassword, newPassword } = updatePasswordDto;
     const user = await this.db.get(`user.${id}`);
+    if (!user) throw new NotFoundException('User not found');
     const version = user.version + 1;
     const updatedAt = new Date().getTime();
     const newUser = {
