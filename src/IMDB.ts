@@ -101,4 +101,16 @@ export class InMemoryDB {
       return null;
     }
   }
+
+  findByTrackName(trackname: string): any {
+    if (this.store['track']) {
+      for (const key in this.store['track']) {
+        const track = this.store['track'][key];
+        if (track.name === trackname) {
+          return track;
+        }
+      }
+      return null;
+    }
+  }
 }

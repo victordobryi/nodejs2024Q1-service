@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
-import { UpdateAlbumDto } from './dto/update-album.dto';
 import { InMemoryDB } from 'src/IMDB';
 import { Album } from './entities/album.entity';
 import { v4 } from 'uuid';
