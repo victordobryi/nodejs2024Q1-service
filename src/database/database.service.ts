@@ -1,4 +1,7 @@
-export class InMemoryDB {
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class DatabaseService {
   private store: { [key: string]: any };
 
   constructor() {

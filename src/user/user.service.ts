@@ -3,19 +3,16 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { InMemoryDB } from 'src/IMDB';
 import { User } from './entities/user.entity';
 import { plainToInstance } from 'class-transformer';
 import { v4 } from 'uuid';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-user.dto';
+import { DatabaseService } from 'src/database/database.service';
 
 @Injectable()
 export class UserService {
-  private db: InMemoryDB;
-  constructor() {
-    this.db = new InMemoryDB();
-  }
+  constructor(private readonly db: DatabaseService) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const id = v4();
@@ -23,7 +20,13 @@ export class UserService {
     const createdAt = new Date().getTime();
     return plainToInstance(
       User,
-      this.db.save(`user.${id}`, { ...createUserDto, id, version, createdAt }),
+      this.db.save(`user.${id}`, {
+        ...createUserDto,
+        id,
+        version,
+        createdAt,
+        updatedAt: createdAt,
+      }),
     );
   }
 

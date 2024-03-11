@@ -1,16 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
-import { UpdateTrackDto } from './dto/update-track.dto';
-import { InMemoryDB } from 'src/IMDB';
 import { Track } from './entities/track.entity';
 import { v4 } from 'uuid';
+import { DatabaseService } from 'src/database/database.service';
 
 @Injectable()
 export class TrackService {
-  private db: InMemoryDB;
-  constructor() {
-    this.db = new InMemoryDB();
-  }
+  constructor(private readonly db: DatabaseService) {}
 
   async create(createTrackDto: CreateTrackDto): Promise<Track> {
     const id = v4();

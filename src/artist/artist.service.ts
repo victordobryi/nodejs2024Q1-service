@@ -1,15 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { Artist } from './entities/artist.entity';
-import { InMemoryDB } from 'src/IMDB';
 import { v4 } from 'uuid';
+import { DatabaseService } from 'src/database/database.service';
 
 @Injectable()
 export class ArtistService {
-  private db: InMemoryDB;
-  constructor() {
-    this.db = new InMemoryDB();
-  }
+  constructor(private readonly db: DatabaseService) {}
 
   async create(createArtistDto: CreateArtistDto): Promise<Artist> {
     const id = v4();
