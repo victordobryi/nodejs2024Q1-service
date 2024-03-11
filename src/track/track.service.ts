@@ -22,7 +22,7 @@ export class TrackService {
   }
 
   async findByName(name: string): Promise<Track | null> {
-    return this.db.findByTrackName(name);
+    return this.db.findByProperty('track', 'name', name);
   }
 
   async update(id: string, track: Track): Promise<Track> {

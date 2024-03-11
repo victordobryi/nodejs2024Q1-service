@@ -26,7 +26,7 @@ export class ArtistService {
   }
 
   async findByName(name: string): Promise<Artist | null> {
-    return this.db.findByArtistName(name);
+    return this.db.findByProperty('artist', 'name', name);
   }
 
   async update(id: string, artist: Artist): Promise<Artist> {

@@ -18,18 +18,26 @@ import { UpdateArtistDto } from './dto/update-artist.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { handleErrors } from 'src/utils/handleErrors';
 import { Artist } from './entities/artist.entity';
+import { TrackService } from 'src/track/track.service';
+import { AlbumService } from 'src/album/album.service';
+import { FavoritesService } from 'src/favorites/favorites.service';
 
 @ApiTags('Artist')
 @Controller('artist')
 export class ArtistController {
-  constructor(private readonly artistService: ArtistService) {}
+  constructor(
+    private readonly artistService: ArtistService,
+    private readonly trackService: TrackService,
+    private readonly albumService: AlbumService,
+    private readonly favoritesService: FavoritesService,
+  ) {}
 
   @Post()
   async create(@Body() createArtistDto: CreateArtistDto): Promise<Artist> {
-    const artist = await handleErrors(
-      this.artistService.findByName(createArtistDto.name),
-    );
-    if (artist) throw new BadRequestException('Artist already exists');
+    // const artist = await handleErrors(
+    //   this.artistService.findByName(createArtistDto.name),
+    // );
+    // if (artist) throw new BadRequestException('Artist already exists');
     return await handleErrors(this.artistService.create(createArtistDto));
   }
 
@@ -73,6 +81,17 @@ export class ArtistController {
   async remove(@Param('id', new ParseUUIDPipe()) id: string): Promise<Artist> {
     const deletedArtist = await handleErrors(this.artistService.remove(id));
     if (!deletedArtist) throw new NotFoundException('Artist not found');
+    const tracks = await this.trackService.findAll();
+    const artistTracks = tracks.filter((track) => track.artistId === id);
+    for (const track of artistTracks) {
+      await this.trackService.update(track.id, { ...track, artistId: null });
+    }
+    const album = await this.albumService.findAll();
+    const artistAlbums = album.filter((album) => album.artistId === id);
+    for (const album of artistAlbums) {
+      await this.albumService.update(album.id, { ...album, artistId: null });
+    }
+    await this.favoritesService.removeArtist(deletedArtist.id);
     return deletedArtist;
   }
 }

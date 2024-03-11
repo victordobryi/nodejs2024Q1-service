@@ -38,11 +38,6 @@ export class DatabaseService {
     }
   }
 
-  exists(key: string): boolean {
-    const [storeKey, nestedKey] = key.split('.');
-    return this.store[storeKey] && nestedKey in this.store[storeKey];
-  }
-
   getAll(key: string) {
     const [storeKey, nestedKey] = key.split('.');
     if (this.store[storeKey]) {
@@ -69,51 +64,15 @@ export class DatabaseService {
     return null;
   }
 
-  findByUsername(username: string): any {
-    if (this.store['user']) {
-      for (const key in this.store['user']) {
-        const user = this.store['user'][key];
-        if (user.login === username) {
-          return user;
+  findByProperty(entity: string, propertyName: string, value: string): any {
+    if (this.store[entity]) {
+      for (const key in this.store[entity]) {
+        const item = this.store[entity][key];
+        if (item[propertyName] === value) {
+          return item;
         }
       }
-      return null;
     }
-  }
-
-  findByArtistName(artistname: string): any {
-    if (this.store['artist']) {
-      for (const key in this.store['artist']) {
-        const artist = this.store['artist'][key];
-        if (artist.name === artistname) {
-          return artist;
-        }
-      }
-      return null;
-    }
-  }
-
-  findByAlbumName(albumname: string): any {
-    if (this.store['album']) {
-      for (const key in this.store['album']) {
-        const album = this.store['album'][key];
-        if (album.name === albumname) {
-          return album;
-        }
-      }
-      return null;
-    }
-  }
-
-  findByTrackName(trackname: string): any {
-    if (this.store['track']) {
-      for (const key in this.store['track']) {
-        const track = this.store['track'][key];
-        if (track.name === trackname) {
-          return track;
-        }
-      }
-      return null;
-    }
+    return null;
   }
 }

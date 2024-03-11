@@ -22,7 +22,7 @@ export class AlbumService {
   }
 
   async findByName(name: string): Promise<Album | null> {
-    return this.db.findByAlbumName(name);
+    return this.db.findByProperty('album', 'name', name);
   }
 
   async update(id: string, album: Album): Promise<Album> {

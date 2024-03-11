@@ -39,7 +39,7 @@ export class UserService {
   }
 
   async findByName(name: string): Promise<User | null> {
-    return plainToInstance(User, this.db.findByUsername(name));
+    return plainToInstance(User, this.db.findByProperty('user', 'login', name));
   }
 
   async update(

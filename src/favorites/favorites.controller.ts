@@ -6,6 +6,8 @@ import {
   Delete,
   ParseUUIDPipe,
   UnprocessableEntityException,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
 import { ApiTags } from '@nestjs/swagger';
@@ -38,6 +40,7 @@ export class FavoritesController {
   }
 
   @Delete('track/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   async removeTrack(@Param('id') id: string) {
     const track = await this.trackService.findById(id);
     if (!track) throw new UnprocessableEntityException('Track not found');
@@ -52,6 +55,7 @@ export class FavoritesController {
   }
 
   @Delete('album/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   async removeAlbum(@Param('id') id: string) {
     const album = await this.albumService.findById(id);
     if (!album) throw new UnprocessableEntityException('Album not found');
@@ -66,6 +70,7 @@ export class FavoritesController {
   }
 
   @Delete('artist/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   async removeArtist(@Param('id') id: string) {
     const album = await this.artistService.findById(id);
     if (!album) throw new UnprocessableEntityException('Artist not found');

@@ -29,10 +29,10 @@ export class UserController {
 
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
-    const user = await handleErrors(
-      this.userService.findByName(createUserDto.login),
-    );
-    if (user) throw new BadRequestException('User already exists');
+    // const user = await handleErrors(
+    //   this.userService.findByName(createUserDto.login),
+    // );
+    // if (user) throw new BadRequestException('User already exists');
 
     return await handleErrors(this.userService.create(createUserDto));
   }
