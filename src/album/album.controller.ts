@@ -5,7 +5,6 @@ import {
   Body,
   Param,
   Delete,
-  BadRequestException,
   ParseUUIDPipe,
   NotFoundException,
   HttpCode,
@@ -17,7 +16,14 @@ import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { handleErrors } from 'src/utils/handleErrors';
 import { Album } from './entities/album.entity';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBody,
+  ApiNotFoundResponse,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { TrackService } from 'src/track/track.service';
 import { FavoritesService } from 'src/favorites/favorites.service';
 
@@ -31,28 +37,66 @@ export class AlbumController {
   ) {}
 
   @Post()
+  @ApiOperation({ summary: 'Create album' })
+  @ApiBody({ type: CreateAlbumDto, required: true })
+  @ApiResponse({
+    status: 201,
+    type: Album,
+    description: 'The album has been created.',
+  })
+  @ApiBadRequestResponse({
+    status: 400,
+    description: 'Bad request. Body does not contain required fields',
+  })
   async create(@Body() createAlbumDto: CreateAlbumDto): Promise<Album> {
-    // const album = await handleErrors(
-    //   this.albumService.findByName(createAlbumDto.name),
-    // );
-    // if (album) throw new BadRequestException('Album already exists');
-
     return await handleErrors(this.albumService.create(createAlbumDto));
   }
 
   @Get()
+  @ApiOperation({ summary: 'Get all albums' })
+  @ApiResponse({
+    status: 200,
+    description: 'Get all albums',
+    type: [Album],
+  })
   async findAll(): Promise<Album[]> {
     return await handleErrors(this.albumService.findAll());
   }
 
   @Get(':id')
-  async findById(@Param('id', new ParseUUIDPipe()) id: string): Promise<Album> {
+  @ApiOperation({ summary: 'Get album by id' })
+  @ApiResponse({
+    status: 200,
+    type: Album,
+    description: 'Successful operation',
+  })
+  @ApiBadRequestResponse({
+    status: 400,
+    description: 'Bad request. albumId is invalid (not uuid)',
+  })
+  @ApiNotFoundResponse({
+    status: 404,
+    description: 'Album not found',
+  })
+  async findById(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ): Promise<Album> {
     const album = await handleErrors(this.albumService.findById(id));
     if (!album) throw new NotFoundException('Album not found');
     return album;
   }
 
   @Get('name/:name')
+  @ApiOperation({ summary: 'Get album by name' })
+  @ApiResponse({
+    status: 200,
+    type: Album,
+    description: 'Successful operation',
+  })
+  @ApiNotFoundResponse({
+    status: 404,
+    description: 'Album not found',
+  })
   async findByName(@Param('name') name: string): Promise<Album> {
     const album = await handleErrors(this.albumService.findByName(name));
     if (!album) throw new NotFoundException('Album not found');
@@ -60,8 +104,23 @@ export class AlbumController {
   }
 
   @Put(':id')
+  @ApiOperation({ summary: 'Update album' })
+  @ApiBody({ type: UpdateAlbumDto, required: true })
+  @ApiResponse({
+    status: 200,
+    description: 'The Album has been updated',
+    type: Album,
+  })
+  @ApiBadRequestResponse({
+    status: 400,
+    description: 'Bad request. AlbumId is invalid (not uuid)',
+  })
+  @ApiNotFoundResponse({
+    status: 404,
+    description: 'Album not found',
+  })
   async update(
-    @Param('id', new ParseUUIDPipe()) id: string,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
     @Body() updateAlbumDto: UpdateAlbumDto,
   ): Promise<Album> {
     const album = await this.findById(id);
@@ -71,8 +130,23 @@ export class AlbumController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Delete album' })
+  @ApiResponse({
+    status: 204,
+    description: 'Album has been deleted.',
+  })
+  @ApiBadRequestResponse({
+    status: 400,
+    description: 'Bad request. albumId is invalid (not uuid)',
+  })
+  @ApiNotFoundResponse({
+    status: 404,
+    description: 'Album not found',
+  })
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id', new ParseUUIDPipe()) id: string): Promise<Album> {
+  async remove(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ): Promise<Album> {
     const deletedAlbum = (await handleErrors(
       this.albumService.remove(id),
     )) as Album;
