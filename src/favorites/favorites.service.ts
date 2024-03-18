@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { FavoritesResponse } from './entities/favorites.entity';
-import { Track } from 'src/track/entities/track.entity';
-import { Album } from 'src/album/entities/album.entity';
-import { Artist } from 'src/artist/entities/artist.entity';
-import { DatabaseService } from 'src/database/database.service';
+import { Album } from '../album/entities/album.entity';
+import { Artist } from '../artist/entities/artist.entity';
+import { Track } from '../track/entities/track.entity';
+import { DatabaseService } from '../database/database.service';
 
 @Injectable()
 export class FavoritesService {

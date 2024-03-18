@@ -14,7 +14,6 @@ import {
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
-import { handleErrors } from 'src/utils/handleErrors';
 import { Album } from './entities/album.entity';
 import {
   ApiBadRequestResponse,
@@ -24,8 +23,9 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { TrackService } from 'src/track/track.service';
-import { FavoritesService } from 'src/favorites/favorites.service';
+import { handleErrors } from '../utils/handleErrors';
+import { TrackService } from '../track/track.service';
+import { FavoritesService } from '../favorites/favorites.service';
 
 @ApiTags('Album')
 @Controller('album')

@@ -22,11 +22,11 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { handleErrors } from 'src/utils/handleErrors';
 import { Artist } from './entities/artist.entity';
-import { TrackService } from 'src/track/track.service';
-import { AlbumService } from 'src/album/album.service';
-import { FavoritesService } from 'src/favorites/favorites.service';
+import { TrackService } from '../track/track.service';
+import { FavoritesService } from '../favorites/favorites.service';
+import { handleErrors } from '../utils/handleErrors';
+import { AlbumService } from '../album/album.service';
 
 @ApiTags('Artist')
 @Controller('artist')

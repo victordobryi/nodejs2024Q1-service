@@ -26,8 +26,8 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { handleErrors } from '../utils/handleErrors';
 import { User } from './entities/user.entity';
-import { handleErrors } from 'src/utils/handleErrors';
 
 @ApiTags('User')
 @Controller('user')

@@ -19,13 +19,13 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { FavoritesResponse } from './entities/favorites.entity';
-import { handleErrors } from 'src/utils/handleErrors';
-import { ArtistService } from 'src/artist/artist.service';
-import { AlbumService } from 'src/album/album.service';
-import { TrackService } from 'src/track/track.service';
-import { Track } from 'src/track/entities/track.entity';
-import { Album } from 'src/album/entities/album.entity';
-import { Artist } from 'src/artist/entities/artist.entity';
+import { handleErrors } from '../utils/handleErrors';
+import { AlbumService } from '../album/album.service';
+import { TrackService } from '../track/track.service';
+import { ArtistService } from '../artist/artist.service';
+import { Track } from '../track/entities/track.entity';
+import { Album } from '../album/entities/album.entity';
+import { Artist } from '../artist/entities/artist.entity';
 
 @ApiTags('Favorites')
 @Controller('favs')

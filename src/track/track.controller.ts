@@ -23,8 +23,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Track } from './entities/track.entity';
-import { handleErrors } from 'src/utils/handleErrors';
-import { FavoritesService } from 'src/favorites/favorites.service';
+import { handleErrors } from '../utils/handleErrors';
+import { FavoritesService } from '../favorites/favorites.service';
 
 @ApiTags('Track')
 @Controller('track')
