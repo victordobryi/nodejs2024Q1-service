@@ -1,10 +1,13 @@
 # These folders will created in docker build process
-**/node_modules/
-**/dist/
-**/doc/
+node_modules
+dist
+build
+npm-debug.log
 
 # These folders don't use in production version
-**/test/
+test
+doc
+coverage
 
 # These files are not used in the application
 .dockerignore
@@ -17,4 +20,6 @@ Dockerfile
 README.md
 .gitignore
 .git
+*.md
+*.config.js
 

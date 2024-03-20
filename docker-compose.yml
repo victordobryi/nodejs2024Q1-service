@@ -1,32 +1,54 @@
-version: '3'
+version: '3.8'
 
 services:
-  postgres:
+  api:
     build:
+      dockerfile: Dockerfile
       context: .
-      dockerfile: Dockerfile.db
+      target: development
+    restart: always
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app
+      - /app/node_modules
+    env_file:
+      - .env
+    command: npm run start:dev
+    ports:
+      - '${PORT}:${PORT}'
+    networks:
+      - user-defined
+
+  postgres:
+    image: postgres:alpine
+    restart: always
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - '5432:5432'
+      - '${POSTGRES_PORT}:${POSTGRES_PORT}'
+    volumes:
+      - pgdb-data:/var/lib/postgresql/data
+      - pgdb-logs:/var/log/postgresql/
     networks:
-      - custom_network
+      - user-defined
+    command: postgres -c logging_collector=on -c log_filename=postgres.log -c log_statement=all
 
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile.app
-    environment:
-      PORT: ${PORT}
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?schema=public
+  adminer:
+    image: adminer
+    restart: always
     ports:
-      - '4000:4000'
-    depends_on:
-      - postgres
+      - ${ADMINER_PORT}:${ADMINER_PORT}
     networks:
-      - custom_network
+      - user-defined
+
+volumes:
+  pgdb-data:
+  pgdb-logs:
 
 networks:
-  custom_network:
+  user-defined:
+    name: ${NETWORK}
+    driver: ${DRIVER}
