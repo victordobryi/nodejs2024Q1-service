@@ -3,7 +3,7 @@ version: '3.8'
 services:
   api:
     build:
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.api
       context: .
       target: development
     restart: always
@@ -21,7 +21,9 @@ services:
       - user-defined
 
   postgres:
-    image: postgres:alpine
+    build:
+      dockerfile: Dockerfile.db
+      context: .
     restart: always
     environment:
       POSTGRES_DB: ${POSTGRES_DB}

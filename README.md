@@ -5,6 +5,42 @@
 - Git - [Download & Install Git](https://git-scm.com/downloads).
 - Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
 
+## Environments
+
+All environments should be in .env file. Use this command to create .env file with the necessary environments
+
+```
+cp .env.example .env
+```
+
+## Docker
+
+To launch the application, use this command. Make sure that Docker-desktop is running and the .env file has been created
+
+```
+docker-compose up
+```
+
+To stop the application, use this command.
+
+```
+docker compose down
+```
+
+## Check Vulnerabilities
+
+To check postgres vulnerabilities run this command
+
+```
+npm run check:db
+```
+
+To check REST vulnerabilities run this command
+
+```
+npm run check:rest
+```
+
 ## Docs
 
 ```
