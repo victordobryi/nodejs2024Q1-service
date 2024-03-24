@@ -1,35 +1,33 @@
 import { Injectable } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { Album } from './entities/album.entity';
-import { v4 } from 'uuid';
-import { DatabaseService } from '../database/database.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class AlbumService {
-  constructor(private readonly db: DatabaseService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async create(createAlbumDto: CreateAlbumDto): Promise<Album> {
-    const id = v4();
-    return this.db.save(`album.${id}`, { ...createAlbumDto, id });
+    return await this.prisma.album.create({ data: createAlbumDto });
   }
 
   async findAll(): Promise<Album[]> {
-    return this.db.getAll('album');
+    return await this.prisma.album.findMany();
   }
 
   async findById(id: string): Promise<Album | null> {
-    return this.db.get(`album.${id}`);
+    return await this.prisma.album.findUnique({ where: { id } });
   }
 
   async findByName(name: string): Promise<Album | null> {
-    return this.db.findByProperty('album', 'name', name);
+    return await this.prisma.album.findFirst({ where: { name } });
   }
 
   async update(id: string, album: Album): Promise<Album> {
-    return this.db.update(`album.${id}`, album);
+    return await this.prisma.album.update({ where: { id }, data: album });
   }
 
   async remove(id: string) {
-    return this.db.delete(`album.${id}`);
+    return await this.prisma.album.delete({ where: { id } });
   }
 }

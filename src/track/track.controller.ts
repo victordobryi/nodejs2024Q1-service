@@ -24,15 +24,11 @@ import {
 } from '@nestjs/swagger';
 import { Track } from './entities/track.entity';
 import { handleErrors } from '../utils/handleErrors';
-import { FavoritesService } from '../favorites/favorites.service';
 
 @ApiTags('Track')
 @Controller('track')
 export class TrackController {
-  constructor(
-    private readonly trackService: TrackService,
-    private readonly favoritesService: FavoritesService,
-  ) {}
+  constructor(private readonly trackService: TrackService) {}
 
   @Post()
   @ApiOperation({ summary: 'Create track' })
@@ -145,9 +141,7 @@ export class TrackController {
   async remove(
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
   ): Promise<Track> {
-    const deletedTrack = await handleErrors(this.trackService.remove(id));
-    if (!deletedTrack) throw new NotFoundException('Track not found');
-    await this.favoritesService.removeTrack(deletedTrack.id);
-    return deletedTrack;
+    await this.findById(id);
+    return await handleErrors(this.trackService.remove(id));
   }
 }

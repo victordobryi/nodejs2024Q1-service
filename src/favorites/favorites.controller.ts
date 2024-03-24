@@ -66,7 +66,7 @@ export class FavoritesController {
   async addTrack(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     const track = await handleErrors(this.trackService.findById(id));
     if (!track) throw new UnprocessableEntityException('Track not found');
-    return await handleErrors(this.favoritesService.addTrack(track));
+    return await handleErrors(this.favoritesService.addTrack(id));
   }
 
   @Delete('track/:id')
@@ -110,7 +110,7 @@ export class FavoritesController {
   async addAlbum(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     const album = await this.albumService.findById(id);
     if (!album) throw new UnprocessableEntityException('Album not found');
-    return await handleErrors(this.favoritesService.addAlbum(album));
+    return await handleErrors(this.favoritesService.addAlbum(id));
   }
 
   @Delete('album/:id')
@@ -156,7 +156,7 @@ export class FavoritesController {
   ) {
     const artist = await this.artistService.findById(id);
     if (!artist) throw new UnprocessableEntityException('Artist not found');
-    return await handleErrors(this.favoritesService.addArtist(artist));
+    return await handleErrors(this.favoritesService.addArtist(id));
   }
 
   @Delete('artist/:id')

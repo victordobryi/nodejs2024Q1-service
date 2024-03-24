@@ -24,17 +24,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { handleErrors } from '../utils/handleErrors';
-import { TrackService } from '../track/track.service';
-import { FavoritesService } from '../favorites/favorites.service';
 
 @ApiTags('Album')
 @Controller('album')
 export class AlbumController {
-  constructor(
-    private readonly albumService: AlbumService,
-    private readonly trackService: TrackService,
-    private readonly favoritesService: FavoritesService,
-  ) {}
+  constructor(private readonly albumService: AlbumService) {}
 
   @Post()
   @ApiOperation({ summary: 'Create album' })
@@ -147,18 +141,7 @@ export class AlbumController {
   async remove(
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
   ): Promise<Album> {
-    const deletedAlbum = (await handleErrors(
-      this.albumService.remove(id),
-    )) as Album;
-    if (!deletedAlbum) throw new NotFoundException('Album not found');
-    const tracks = await this.trackService.findAll();
-    const albumTracks = tracks.filter(
-      (track) => track.albumId === deletedAlbum.id,
-    );
-    for (const track of albumTracks) {
-      await this.trackService.update(track.id, { ...track, albumId: null });
-    }
-    await this.favoritesService.removeAlbum(deletedAlbum.id);
-    return deletedAlbum;
+    await this.findById(id);
+    return await handleErrors(this.albumService.remove(id));
   }
 }

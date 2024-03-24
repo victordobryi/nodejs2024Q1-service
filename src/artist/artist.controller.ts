@@ -23,20 +23,12 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Artist } from './entities/artist.entity';
-import { TrackService } from '../track/track.service';
-import { FavoritesService } from '../favorites/favorites.service';
 import { handleErrors } from '../utils/handleErrors';
-import { AlbumService } from '../album/album.service';
 
 @ApiTags('Artist')
 @Controller('artist')
 export class ArtistController {
-  constructor(
-    private readonly artistService: ArtistService,
-    private readonly trackService: TrackService,
-    private readonly albumService: AlbumService,
-    private readonly favoritesService: FavoritesService,
-  ) {}
+  constructor(private readonly artistService: ArtistService) {}
 
   @Post()
   @ApiOperation({ summary: 'Create artist' })
@@ -152,19 +144,7 @@ export class ArtistController {
   async remove(
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
   ): Promise<Artist> {
-    const deletedArtist = await handleErrors(this.artistService.remove(id));
-    if (!deletedArtist) throw new NotFoundException('Artist not found');
-    const tracks = await this.trackService.findAll();
-    const artistTracks = tracks.filter((track) => track.artistId === id);
-    for (const track of artistTracks) {
-      await this.trackService.update(track.id, { ...track, artistId: null });
-    }
-    const album = await this.albumService.findAll();
-    const artistAlbums = album.filter((album) => album.artistId === id);
-    for (const album of artistAlbums) {
-      await this.albumService.update(album.id, { ...album, artistId: null });
-    }
-    await this.favoritesService.removeArtist(deletedArtist.id);
-    return deletedArtist;
+    await this.findById(id);
+    return await handleErrors(this.artistService.remove(id));
   }
 }

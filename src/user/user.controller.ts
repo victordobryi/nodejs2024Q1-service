@@ -149,11 +149,8 @@ export class UserController {
     description: 'User not found',
   })
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(
-    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
-  ): Promise<User> {
-    const deletedUser = await handleErrors(this.userService.remove(id));
-    if (!deletedUser) throw new NotFoundException('User not found');
-    return deletedUser;
+  async remove(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+    await this.findById(id);
+    return await handleErrors(this.userService.remove(id));
   }
 }
