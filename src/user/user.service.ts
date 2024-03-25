@@ -21,7 +21,9 @@ export class UserService {
   }
 
   async findAll(): Promise<User[]> {
-    return plainToInstance(User, await this.prisma.user.findMany());
+    return (await this.prisma.user.findMany()).map((user) =>
+      plainToInstance(User, user),
+    );
   }
 
   async findById(id: string): Promise<User | null> {
