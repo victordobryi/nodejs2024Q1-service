@@ -41,6 +41,14 @@ To check REST vulnerabilities run this command
 npm run check:rest
 ```
 
+## Prisma
+
+To open prisma studio run this command
+
+```
+npm run prisma:studio
+```
+
 ## Docs
 
 ```
