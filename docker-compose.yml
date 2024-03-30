@@ -2,7 +2,6 @@ version: '3.8'
 
 services:
   api:
-    container_name: api
     build:
       dockerfile: Dockerfile.api
       context: .
@@ -36,10 +35,16 @@ services:
       - '${POSTGRES_PORT}:${POSTGRES_PORT}'
     volumes:
       - pgdb-data:/var/lib/postgresql/data
-      - pgdb-logs:/var/log/postgresql/
+      - pgdb-logs:/logs
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     networks:
       - user-defined
-    command: postgres -c logging_collector=on -c log_filename=postgres.log -c log_statement=all
+    command: postgres -c logging_collector=on -c log_directory=/logs -c log_filename=postgresql.log -c log_statement=all
 
 volumes:
   pgdb-data:
