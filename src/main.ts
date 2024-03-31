@@ -19,7 +19,7 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
-
+  // app.useGlobalFilters
   await app.listen(PORT);
 }
 bootstrap();
