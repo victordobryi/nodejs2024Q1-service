@@ -1,0 +1,8 @@
+FROM postgres:alpine
+ENV POSTGRES_DB=${POSTGRES_DB}
+ENV POSTGRES_USER=${POSTGRES_USER}
+ENV POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+EXPOSE ${POSTGRES_PORT}
+VOLUME pgdb-data:/var/lib/postgresql/data
+VOLUME pgdb-logs:/var/log/postgresql/
+CMD ["postgres", "-c", "logging_collector=on", "-c", "log_filename=postgres.log", "-c", "log_statement=all"]

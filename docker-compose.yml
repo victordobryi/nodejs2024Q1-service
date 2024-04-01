@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  api:
+    container_name: api
+    build:
+      dockerfile: Dockerfile.api
+      context: .
+      target: development
+    restart: always
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app
+      - /app/node_modules
+    env_file:
+      - .env
+    command: npm run start:app
+    ports:
+      - '${PORT}:${PORT}'
+      - '${STUDIO_PORT}:${STUDIO_PORT}'
+    networks:
+      - user-defined
+
+  postgres:
+    container_name: postgres
+    build:
+      dockerfile: Dockerfile.db
+      context: .
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - '${POSTGRES_PORT}:${POSTGRES_PORT}'
+    volumes:
+      - pgdb-data:/var/lib/postgresql/data
+      - pgdb-logs:/var/log/postgresql/
+    networks:
+      - user-defined
+    command: postgres -c logging_collector=on -c log_filename=postgres.log -c log_statement=all
+
+volumes:
+  pgdb-data:
+  pgdb-logs:
+
+networks:
+  user-defined:
+    name: ${NETWORK}
+    driver: ${DRIVER}
