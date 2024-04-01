@@ -11,6 +11,7 @@ import { ErrorHandlingService } from './common/filters/ErrorHandlingService';
 import { PrismaExceptionFilter } from './common/filters/PrismaExceptionFilter';
 import { AllExceptionsFilter } from './common/filters/AllExceptionsFilter';
 import { LoggerModule } from './logger/logger.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { LoggerModule } from './logger/logger.module';
     TrackModule,
     FavoritesModule,
     LoggerModule,
+    AuthModule,
   ],
   providers: [
     PrismaService,

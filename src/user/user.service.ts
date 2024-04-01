@@ -8,16 +8,21 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { PrismaService } from '../prisma/prisma.service';
+import { hash, genSalt, compare } from 'bcrypt';
 
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
-    return plainToInstance(
-      User,
-      await this.prisma.user.create({ data: createUserDto }),
-    );
+  async createUser(createUserDto: CreateUserDto) {
+    const password = await this.hashPassword(createUserDto.password);
+    const user = await this.prisma.user.create({
+      data: {
+        ...createUserDto,
+        password,
+      },
+    });
+    return plainToInstance(User, user);
   }
 
   async findAll(): Promise<User[]> {
@@ -52,19 +57,24 @@ export class UserService {
     id: string,
     updatePasswordDto: UpdatePasswordDto,
   ): Promise<User> {
-    const { oldPassword, newPassword } = updatePasswordDto;
+    const { newPassword, oldPassword } = updatePasswordDto;
     const user = await this.prisma.user.findUnique({
-      where: {
-        id,
-      },
+      where: { id },
     });
     if (!user) throw new NotFoundException('User not found');
-    if (user.password !== oldPassword)
+
+    const passwordMatch = await compare(oldPassword, newPassword);
+
+    if (!passwordMatch)
       throw new ForbiddenException('Old password is incorrect');
+
+    const hashedPassword = await this.hashPassword(
+      updatePasswordDto.newPassword,
+    );
 
     const updatedUser = await this.prisma.user.update({
       where: { id },
-      data: { password: newPassword, version: user.version + 1 },
+      data: { password: hashedPassword, version: user.version + 1 },
     });
 
     return plainToInstance(User, updatedUser);
@@ -72,5 +82,10 @@ export class UserService {
 
   async remove(id: string) {
     return await this.prisma.user.delete({ where: { id } });
+  }
+
+  private async hashPassword(password: string): Promise<string> {
+    const salt = await genSalt(parseInt(process.env.CRYPT_SALT));
+    return await hash(password, salt);
   }
 }
