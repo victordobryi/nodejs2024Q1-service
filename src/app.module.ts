@@ -6,10 +6,11 @@ import { TrackModule } from './track/track.module';
 import { FavoritesModule } from './favorites/favorites.module';
 import { PrismaService } from './prisma/prisma.service';
 import { APP_FILTER } from '@nestjs/core';
-import { HttpExceptionFilter } from './filters/HttpExceptionFilter';
-import { ErrorHandlingService } from './filters/ErrorHandlingService';
-import { PrismaExceptionFilter } from './filters/PrismaExceptionFilter';
-import { AllExceptionsFilter } from './filters/AllExceptionsFilter';
+import { HttpExceptionFilter } from './common/filters/HttpExceptionFilter';
+import { ErrorHandlingService } from './common/filters/ErrorHandlingService';
+import { PrismaExceptionFilter } from './common/filters/PrismaExceptionFilter';
+import { AllExceptionsFilter } from './common/filters/AllExceptionsFilter';
+import { LoggerModule } from './logger/logger.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { AllExceptionsFilter } from './filters/AllExceptionsFilter';
     AlbumModule,
     TrackModule,
     FavoritesModule,
+    LoggerModule,
   ],
   providers: [
     PrismaService,

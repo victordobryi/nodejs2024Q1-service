@@ -1,5 +1,6 @@
 import { ArgumentsHost, HttpStatus, Injectable } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
+import { LoggerService } from '../../logger/logger.service';
 
 export interface CommonError {
   statusCode: number | null;
@@ -13,7 +14,10 @@ interface ResponseBody {
 
 @Injectable()
 export class ErrorHandlingService {
-  constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
+  constructor(
+    private readonly httpAdapterHost: HttpAdapterHost,
+    private readonly logger: LoggerService,
+  ) {}
 
   handleError(error: CommonError, host: ArgumentsHost): void {
     const { httpAdapter } = this.httpAdapterHost;
@@ -28,6 +32,11 @@ export class ErrorHandlingService {
           statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
           message: 'Internal Server Error',
         };
+
+    this.logger.error(
+      `error: ${JSON.stringify(responseBody)}`,
+      ErrorHandlingService.name,
+    );
 
     httpAdapter.reply(ctx.getResponse(), responseBody, responseBody.statusCode);
   }
