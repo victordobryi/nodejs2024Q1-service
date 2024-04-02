@@ -8,6 +8,7 @@ import { jwtConfigFactory } from './jwtConfigFactory/jwtConfigFactory';
 import { SessionJwtStrategy } from './security/sessionJwtStrategy';
 import { UserLoginStrategy } from './security/userLoginStrategy';
 import { PrismaService } from '../prisma/prisma.service';
+import { UserService } from '../user/user.service';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { PrismaService } from '../prisma/prisma.service';
     AuthService,
     UserLoginStrategy,
     SessionJwtStrategy,
+    UserService,
     PrismaService,
   ],
 })

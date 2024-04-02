@@ -2,8 +2,6 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
-import 'dotenv/config';
-
 @Injectable()
 export class SessionJwtStrategy extends PassportStrategy(Strategy) {
   constructor() {
@@ -19,6 +17,7 @@ export class SessionJwtStrategy extends PassportStrategy(Strategy) {
     login: string;
   }): Promise<{ userId: string; login: string }> {
     const { userId, login } = payload;
+    console.log(userId);
     if (!userId || !login) {
       throw new UnauthorizedException('Invalid token payload');
     }

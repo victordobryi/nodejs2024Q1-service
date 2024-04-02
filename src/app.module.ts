@@ -5,13 +5,14 @@ import { AlbumModule } from './album/album.module';
 import { TrackModule } from './track/track.module';
 import { FavoritesModule } from './favorites/favorites.module';
 import { PrismaService } from './prisma/prisma.service';
-import { APP_FILTER } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { HttpExceptionFilter } from './common/filters/HttpExceptionFilter';
 import { ErrorHandlingService } from './common/filters/ErrorHandlingService';
 import { PrismaExceptionFilter } from './common/filters/PrismaExceptionFilter';
 import { AllExceptionsFilter } from './common/filters/AllExceptionsFilter';
 import { LoggerModule } from './logger/logger.module';
 import { AuthModule } from './auth/auth.module';
+import JwtAuthGuard from './auth/guards/jwtAuth.guard';
 
 @Module({
   imports: [
@@ -26,6 +27,10 @@ import { AuthModule } from './auth/auth.module';
   providers: [
     PrismaService,
     ErrorHandlingService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
     {
       provide: APP_FILTER,
       useClass: PrismaExceptionFilter,

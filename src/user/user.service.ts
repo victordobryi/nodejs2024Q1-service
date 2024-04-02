@@ -63,14 +63,12 @@ export class UserService {
     });
     if (!user) throw new NotFoundException('User not found');
 
-    const passwordMatch = await compare(oldPassword, newPassword);
+    const passwordMatch = await compare(oldPassword, user.password);
 
     if (!passwordMatch)
       throw new ForbiddenException('Old password is incorrect');
 
-    const hashedPassword = await this.hashPassword(
-      updatePasswordDto.newPassword,
-    );
+    const hashedPassword = await this.hashPassword(newPassword);
 
     const updatedUser = await this.prisma.user.update({
       where: { id },
