@@ -53,7 +53,7 @@ export class UserController {
     );
     if (user) throw new BadRequestException('User already exists');
 
-    return await handleErrors(this.userService.create(createUserDto));
+    return await handleErrors(this.userService.createUser(createUserDto));
   }
 
   @Get()
